@@ -4,6 +4,7 @@ import os
 import requests
 import json
 import time
+from chalicelib.response_template import Fields, Attachment, SlackResponse
 app = Chalice(app_name='github-access-webhook')
 
 
@@ -37,79 +38,51 @@ def github_valid_user():
         else:
             myres = requests.get('https://api.github.com/users/' + text[0])
             print(myres)
-            res = {
-                "response_type": "in_channel",
-                "text": 'you have entered invalid username'
+            res = SlackResponse()
+            res.response_type = "in_channel"
+            res.text = 'you have entered invalid username'
+            res_json = json.dumps(res.to_struct())
 
-            }
             if(myres.ok):
                 data = json.loads(myres.content)
-                attachments = [
-                    {
-                        "fallback": "Here is the " + text[0] + " details",
-                        "color": "#000000",
-                        "pretext": text[0] + " info",
-                        "author_name": data['name'],
-                        "author_link": "http://github.com/" + text[0],
-                        "author_icon": data['avatar_url'],
-                        "title": 'https://github.com/' + text[0],
-                        "title_link": data['url'],
-                        "text": "User is valid and here is its info",
-                        "fields": [
-                            {
-                                    "title": "Bio",
-                                    "value": data['bio'],
-                                    "short": False
-                            },
-                            {
-                                "title": "Company",
-                                "value": data["company"],
-                                "short": False
-                            },
-                            {
-                                "title": "Location",
-                                "value": data['location'],
-                                "short": False
-                            }
-                        ],
-                        "image_url": "http://my-website.com/path/to/image.jpg",
-                        "thumb_url": "http://example.com/path/to/thumb.png",
-                        "footer_icon": "https://cdn4.iconfinder.com/data/icons/iconsimple-logotypes/512/github-256.png",
-                        "footer": "Github Info",
-                        "ts": time.time()
-                    }
-                ]
-                res = {
-                    "response_type": "in_channel",
-                    "text": 'Here is the user info from github for ' + text[0],
-                    "attachments": attachments
-                }
-            print(res)
-            return Response(body=res,
+                attach = Attachment()
+                attach.fallback = "Here is the " + text[0] + " details"
+                attach.color = "#000000"
+                attach.pretext = text[0] + " info"
+                attach.author_name = data['name']
+                attach.author_icon = data['avatar_url']
+                attach.title = 'https://github.com/' + text[0]
+                attach.title_link = data['url']
+                attach.text = "User is valid and here is its info"
+                field1 = Fields()
+                field2 = Fields()
+                field3 = Fields()
+                field1.title = "Bio"
+                field1.value = data['bio']
+                field1.short = False
+                field2.title = "Company"
+                field2.value = data['company']
+                field2.short = False
+                field3.title = "Location"
+                field3.value = data['location']
+                field3.short = False
+                attach.fields = [field1, field2, field3]
+                attach.image_url = "http://my-website.com/path/to/image.jpg"
+                attach.thumb_url = "http://example.com/path/to/thumb.png"
+                attach.footer_icon = "https://cdn4.iconfinder.com/data/icons/iconsimple-logotypes/512/github-256.png"
+                attach.footer = "Github Info"
+                attach.ts = time.time()
+                res = SlackResponse()
+                res.response_type = "in_channel"
+                res.text = 'Here is the user info from github for ' + text[0]
+                res.attachments = [attach]
+                res_json = json.dumps(res.to_struct())
+
+            print(res_json)
+            return Response(body=res_json,
                             status_code=200,
                             headers={'Content-Type': 'application/json'})
     except():
         return Response(body='Invalid Request',
                         status_code=400,
                         headers={'Content-Type': 'text/plain'})
-
-
-# The view function above will return {"hello": "world"}
-# whenever you make an HTTP GET request to '/'.
-#
-# Here are a few more examples:
-#
-# @app.route('/hello/{name}')
-# def hello_name(name):
-#    # '/hello/james' -> {"hello": "james"}
-#    return {'hello': name}
-#
-# @app.route('/users', methods=['POST'])
-# def create_user():
-#     # This is the JSON body the user sent in their POST request.
-#     user_as_json = app.current_request.json_body
-#     # We'll echo the json body back to the user in a 'user' key.
-#     return {'user': user_as_json}
-#
-# See the README documentation for more examples.
-#
