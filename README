@@ -1,3 +1,4 @@
+This is the slack webhook for slash commands .It takes an Example of displaying github user info on slash commands
 Deployment Command is 
 chalice deploy --stage <name>
 update  config.json in .chalice directory to set environment variables
