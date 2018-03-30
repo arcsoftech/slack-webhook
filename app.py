@@ -5,7 +5,7 @@ import requests
 import json
 import time
 from chalicelib.response_template import Fields, Attachment, SlackResponse
-app = Chalice(app_name='github-access-webhook')
+app = Chalice(app_name='github-info-webhook')
 
 
 def is_request_valid(request):
@@ -21,13 +21,12 @@ def github_valid_user():
     request = parse_qs(app.current_request.raw_body.decode())
     print(request['text'][0])
     try:
+        text = request['text'][0].split()
         if not is_request_valid(request):
             return Response(body='You are not authorized to send this request.Please try from a valid source',
                             status_code=200,
                             headers={'Content-Type': 'text/plain'})
-        text = request['text'][0].split()
-
-        if len(text) != 1:
+        elif len(text) != 1:
             res = {
                 "response_type": "in_channel",
                 "text": "you have entered invalid username"
