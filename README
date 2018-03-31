@@ -1,4 +1,6 @@
-This is the slack webhook for slash commands .It takes an Example of displaying github user info on slash commands
+This is the slack webhook for slash commands .It takes an example of displaying github user info on slash commands.
+I am using python library chalice (microservice farmework) supported by aws to deploy my application on aws lambda with aws api gateway as my triggereing enpoint to lambda.
+For more details check the links in reference section.
 Deployment Command is 
 chalice deploy --stage <name>
 update  config.json in .chalice directory to set environment variables
