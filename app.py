@@ -51,20 +51,13 @@ def github_valid_user():
                 attach.author_name = data['name']
                 attach.author_icon = data['avatar_url']
                 attach.title = 'https://github.com/' + text[0]
-                attach.title_link = data['url']
+                attach.title_link = 'https://github.com/' + text[0]
                 attach.text = "User is valid and here is its info"
-                field1 = Fields()
-                field2 = Fields()
-                field3 = Fields()
-                field1.title = "Bio"
-                field1.value = data['bio']
-                field1.short = False
-                field2.title = "Company"
-                field2.value = data['company']
-                field2.short = False
-                field3.title = "Location"
-                field3.value = data['location']
-                field3.short = False
+                field1 = Fields(title="Bio", value=data['bio'], short=False)
+                field2 = Fields(title="Company",
+                                value=data['company'], short=False)
+                field3 = Fields(title="Location",
+                                value=data['location'], short=False)
                 attach.fields = [field1, field2, field3]
                 attach.image_url = "http://my-website.com/path/to/image.jpg"
                 attach.thumb_url = "http://example.com/path/to/thumb.png"
